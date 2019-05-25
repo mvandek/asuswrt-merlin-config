@@ -1,0 +1,24 @@
+#!/bin/sh
+# save this file as /jffs/.asusrouter and give it chmod a+rx
+
+# from: http://irq5.io/2012/12/10/hacking-functionality-into-asuswrt-routers/
+i=0
+while [ $i -le 20 ]; do
+      success_start_service=`nvram get success_start_service`
+      if [ "$success_start_service" == "1" ]; then
+              break
+      fi
+      i=$(($i+1))
+      echo "autorun APP: wait $i seconds...";
+      sleep 1
+done
+
+# set the vlan scripts
+/jffs/scripts/services-start
+
+#Disable rp_filter. Needed for multicast
+echo 0 > /proc/sys/net/ipv4/conf/vlan4/rp_filter
+
+#Enable NAT for vlan4
+iptables -t nat -D POSTROUTING -o vlan4 -j MASQUERADE
+iptables -t nat -I POSTROUTING -o vlan4 -j MASQUERADE
