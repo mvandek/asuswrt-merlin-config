@@ -1,3 +1,4 @@
 #!/bin/sh
 iptables -I FORWARD --destination 8.8.8.8 -j REJECT
 iptables -I FORWARD --destination 8.8.4.4 -j REJECT
+logger "Reject Google DNS traffic active"
